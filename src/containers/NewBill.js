@@ -20,25 +20,37 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
+    const extensionAllowed = [".jpg", "jpeg", ".png"]
+    const isExtValid = extensionAllowed.some(extension => fileName.endsWith(extension))
+    const justifyInput = document.querySelector('input[type="file"]')
+    if (!isExtValid) {
+      justifyInput.setCustomValidity("Accepted extentions are .jpeg .jpg .png")
+    } else {
+      justifyInput.setCustomValidity("")
+      const formData = new FormData()
+      const email = JSON.parse(localStorage.getItem("user")).email
+      formData.append('file', file)
+      formData.append('email', email)
+
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          console.log(fileUrl)
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+        }).catch(error => console.error(error))
+    }
+    justifyInput.reportValidity()
+
+    
   }
   handleSubmit = e => {
     e.preventDefault()
