@@ -5,14 +5,15 @@
 import Bills from "../containers/Bills"
 import userEvent from '@testing-library/user-event'
 
-import {screen, waitFor, getByTestId} from "@testing-library/dom"
+import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
-import {ROUTES, ROUTES_PATH} from "../constants/routes.js";
+import { ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 
 import router from "../app/Router.js";
 import NewBillUI from "../views/NewBillUI"
+import { fn } from "jquery"
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -41,31 +42,25 @@ describe("Given I am connected as an employee", () => {
     })
     test("then an icon eye are clicked a modal appears", async() => {
       document.body.innerHTML = BillsUI({ data: bills })
+      new Bills({ document, onNavigate: () => {}, store: null, localStorage: null })
       const iconEye = screen.getAllByTestId('icon-eye')
       const iconEye1 = iconEye[0]
-      iconEye1.addEventListener("click", () => {
-        const billUrl = iconEye1.getAttribute("data-bill-url")
-        const imgWidth = Math.floor($('#modaleFile').width() * 0.5)
-        $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill" /></div>`)
-        $('#modaleFile').modal('show')
-      })
+      const mockModal = jest.fn()
+      $.fn.modal = mockModal
       userEvent.click(iconEye1)
-      await waitFor(() => {
-        const modale = screen.getByRole('document')
-        expect(modale).toBeDefined()
-      })
+      expect(mockModal).toHaveBeenCalledWith('show')
     })
     test("then 'new bill' button are clicked new bill's form appears ", async () => {
       document.body.innerHTML = BillsUI({ data: bills })
+      const billsTest  = new Bills({ document, onNavigate: ()=> {}, store: null, localStorage: null })
       const buttonNewBill = screen.getByTestId('btn-new-bill')
-      buttonNewBill.addEventListener("click", () => {
-        document.body.innerHTML = NewBillUI()
-      })
+      const mockHandleClick = jest.fn(() => billsTest.handleClickNewBill())
+      const mockOnNavigate = jest.fn(() => billsTest.onNavigate)
+      billsTest.onNavigate = mockOnNavigate
+      buttonNewBill.addEventListener('click', mockHandleClick)
       userEvent.click(buttonNewBill)
-      await waitFor(() => {
-        const formNewBill = screen.getByTestId('form-new-bill')
-        expect(formNewBill).toBeDefined()
-      })
+      expect(mockHandleClick).toBeCalled()
+      expect(mockOnNavigate).toBeCalledWith(ROUTES_PATH["NewBill"])
     })
   })
 })
