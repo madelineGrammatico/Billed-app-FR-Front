@@ -34,7 +34,6 @@ export default class {
       .list()
       .then(snapshot => {
         const bills = snapshot
-        // console.log("snapshot", snapshot)
           .map(doc => {
             console.log("doc", doc)
             try {
