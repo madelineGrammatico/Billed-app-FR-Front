@@ -84,8 +84,6 @@ describe("Given I am a user connected as Employee", () => {
       if (sortBills.length !== 0) {
         const firstLine = contentBilled.firstChild
         const typeFirstLine = screen.getByText(`${sortBills[0].type}`)
-        console.log(typeFirstLine.innerHTML)
-        console.log(typeFirstLine.nextElementSibling.innerHTML)
         expect(typeFirstLine.innerHTML).toBe(sortBills[0].type)
         const nameFirstLine = typeFirstLine.nextElementSibling.innerHTML
         expect(nameFirstLine).toBe(sortBills[0].name)
