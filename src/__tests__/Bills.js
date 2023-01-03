@@ -53,14 +53,10 @@ describe("Given I am connected as an employee", () => {
     })
     test("then 'new bill' button are clicked new bill's form appears ", async () => {
       document.body.innerHTML = BillsUI({ data: bills })
-      const billsTest  = new Bills({ document, onNavigate: ()=> {}, store: null, localStorage: null })
+      const mockOnNavigate = jest.fn()
+      new Bills({ document, onNavigate: mockOnNavigate, store: null, localStorage: null })
       const buttonNewBill = screen.getByTestId('btn-new-bill')
-      const mockHandleClick = jest.fn(() => billsTest.handleClickNewBill())
-      const mockOnNavigate = jest.fn(() => billsTest.onNavigate)
-      billsTest.onNavigate = mockOnNavigate
-      buttonNewBill.addEventListener('click', mockHandleClick)
       userEvent.click(buttonNewBill)
-      expect(mockHandleClick).toBeCalled()
       expect(mockOnNavigate).toBeCalledWith(ROUTES_PATH["NewBill"])
     })
   })
