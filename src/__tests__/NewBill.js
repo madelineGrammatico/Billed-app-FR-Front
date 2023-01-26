@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen , waitFor} from "@testing-library/dom"
+import { screen } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 
@@ -24,11 +24,6 @@ describe("Given I am connected as an employee", () => {
       const newBill = new NewBill({document, onNavigate: () => {}, store: null, localStorage: null})
 
       expect(screen.getByText("Envoyer une note de frais")).toBeTruthy()
-      // userEvent.selectOptions(screen.getByTestId("expense-type"),"Transports")
-      // userEvent.type(screen.getByTestId("expense-name"),"Transport")
-      // userEvent.type(screen.getByTestId("datepicker"),"2022-04-04")
-      // userEvent.type(screen.getByTestId("amount"),"202")
-      // userEvent.type(screen.getByTestId("pct"),"202")
       const submitNewBill = screen.getByText("Envoyer")
       const mockHandleSubmit = jest.fn(() => newBill.handleSubmit)
       submitNewBill.addEventListener("click", mockHandleSubmit)
@@ -65,9 +60,6 @@ describe("Given I am connected as an employee", () => {
           noContentType: true
         }
       })
-      // expect(newBill.billId).toBe("key")
-      // expect(newBill.fileUrl).toBe("fileUrl")
-      // expect(newBill.fileName).toBe("test.jpg")
     })
   })
 
